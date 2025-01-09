@@ -16,6 +16,8 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
+  Globe,
+  Info,
 } from "lucide-react";
 import {
   LineChart,
@@ -26,6 +28,15 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -204,7 +215,7 @@ export default function Dashboard() {
   const totalPeerPages = getPageCount(displayPeerIds.length);
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-bl from-black to-[#222222] text-white overflow-x-hidden">
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
@@ -214,7 +225,7 @@ export default function Dashboard() {
         <div className="max-w-[2000px] mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src="/logo.svg" alt="Codex" className="w-10 h-10" />
-            <h1 className="text-lg sm:text-xl font-bold">Codex Metrics</h1>
+            <h1 className="text-lg sm:text-xl font-bold">Testnet Metrics</h1>
           </div>
           <div className="flex items-center gap-3">
             <select
@@ -240,6 +251,75 @@ export default function Dashboard() {
               <RotateCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
               <span className="sr-only">Refresh data</span>
             </button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button
+                  className="p-2 text-neutral-400 hover:text-[#7afbaf]
+                    bg-neutral-900 border border-neutral-800 rounded-lg
+                    hover:border-neutral-700 focus:border-[#7afbaf] focus:ring-1 
+                    focus:ring-[#7afbaf] transition-colors cursor-pointer outline-none"
+                >
+                  <Info className="w-5 h-5" />
+                  <span className="sr-only">Dashboard information</span>
+                </button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[600px]">
+                <DialogHeader>
+                  <DialogTitle className="mb-6">Testnet Metrics</DialogTitle>
+                  <div className="w-full h-40 bg-neutral-800 rounded-lg mb-6 animate-pulse" />
+                  <DialogDescription className="pt-3">
+                    The data displayed in this dashboard is collected from Codex nodes that use the{' '}
+                    <a 
+                      href="https://github.com/codex-storage/cli" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#7afbaf] hover:underline"
+                    >
+                      Codex CLI
+                    </a>
+                    {' '}for running a Codex alturistic node in the testnet. Users agree to a privacy 
+                    disclaimer before using the Codex CLI and the data collected will be used to 
+                    understand the testnet statistics and help troubleshooting users who face 
+                    difficulty in getting onboarded to Codex.
+                  </DialogDescription>
+                  <div className="mt-8 space-y-4 border-neutral-800 pt-4">
+                    <div>
+                      <h4 className="text-sm font-semibold text-white mb-2">Don't wish to provide data?</h4>
+                      <p className="text-sm text-neutral-400">
+                        You can still run a Codex node without providing any data. To do this, please follow the steps mentioned in the                     <a 
+                      href="https://docs.codex.storage/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#7afbaf] hover:underline"
+                    >
+                      Codex documentation
+                    </a> which does not use the Codex CLI.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-white mb-2">Is there an incentive to run a Codex node?</h4>
+                      <p className="text-sm text-neutral-400">
+                        Codex is currently in testnet and it is not incentivized. However, in the future, Codex may be incentivized as per the roadmap. But please bear in mind that no incentives are promised for testnet node operators.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-white mb-2">I have a question or suggestion</h4>
+                      <p className="text-sm text-neutral-400">
+                        The best way to get in touch with us is to join the 
+                      <a
+                      href="https://discord.gg/codex-storage"
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#7afbaf] hover:underline"
+                    >
+                      {" "}Codex discord
+                    </a> and ask your question in the #support channel.
+                      </p>
+                    </div>
+                  </div>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </motion.header>
@@ -326,63 +406,84 @@ export default function Dashboard() {
                 className="bg-neutral-900 p-4 sm:p-6 rounded-xl h-[350px] lg:h-[450px] border border-neutral-800 
                   hover:border-neutral-700 transition-colors"
               >
-                <h3 className="text-neutral-400 mb-4 font-medium flex items-center gap-2">
-                  <Activity className="w-5 h-5 opacity-60" />
-                  Active Nodes Over Time
-                </h3>
-                {componentLoading.metrics ? (
-                  <div className="h-[calc(100%-2rem)] flex items-center justify-center">
-                    <ComponentSkeleton />
+                <Tabs defaultValue="nodes" className="h-full flex flex-col">
+                  <div className="flex items-center justify-center mb-6">
+                    <TabsList className="bg-neutral-800 border border-neutral-700">
+                      <TabsTrigger value="nodes" className="data-[state=active]:bg-neutral-900">
+                        <Activity className="w-4 h-4 mr-2" />
+                        Active Nodes
+                      </TabsTrigger>
+                      <TabsTrigger value="geo" className="data-[state=active]:bg-neutral-900">
+                        <Globe className="w-4 h-4 mr-2" />
+                        Geographic Distribution
+                      </TabsTrigger>
+                    </TabsList>
                   </div>
-                ) : metrics.length === 0 ? (
-                  <div className="h-[calc(100%-2rem)] flex items-center justify-center">
-                    <p className="text-neutral-400">No data available for the selected timeframe</p>
-                  </div>
-                ) : (
-                  <div className="h-[calc(100%-2rem)]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={metrics}>
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke="#333"
-                          vertical={false}
-                        />
-                        <XAxis
-                          dataKey="date"
-                          stroke="#666"
-                          tickFormatter={(date) => format(new Date(date), "MMM d")}
-                          fontSize={12}
-                          tickMargin={10}
-                        />
-                        <YAxis
-                          stroke="#666"
-                          fontSize={12}
-                          tickMargin={10}
-                          axisLine={false}
-                        />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: "#1a1a1a",
-                            border: "1px solid #333",
-                            borderRadius: "8px",
-                            fontFamily: "Inter",
-                            fontSize: "12px",
-                            padding: "12px",
-                          }}
-                          cursor={{ stroke: "#666" }}
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="new_records_count"
-                          stroke="#7afbaf"
-                          strokeWidth={2}
-                          dot={false}
-                          activeDot={{ r: 6, fill: "#7afbaf" }}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                )}
+
+                  <TabsContent value="nodes" className="flex-1 mt-0">
+                    {componentLoading.metrics ? (
+                      <div className="h-full flex items-center justify-center">
+                        <ComponentSkeleton />
+                      </div>
+                    ) : metrics.length === 0 ? (
+                      <div className="h-full flex items-center justify-center">
+                        <p className="text-neutral-400">No data available for the selected timeframe</p>
+                      </div>
+                    ) : (
+                      <div className="h-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={metrics}>
+                            <CartesianGrid
+                              strokeDasharray="3 3"
+                              stroke="#333"
+                              vertical={false}
+                            />
+                            <XAxis
+                              dataKey="date"
+                              stroke="#666"
+                              tickFormatter={(date) => format(new Date(date), "MMM d")}
+                              fontSize={12}
+                              tickMargin={10}
+                            />
+                            <YAxis
+                              stroke="#666"
+                              fontSize={12}
+                              tickMargin={10}
+                              axisLine={false}
+                            />
+                            <Tooltip
+                              contentStyle={{
+                                backgroundColor: "#1a1a1a",
+                                border: "1px solid #333",
+                                borderRadius: "8px",
+                                fontFamily: "var(--font-inter)",
+                                fontSize: "12px",
+                                padding: "12px",
+                              }}
+                              cursor={{ stroke: "#666" }}
+                              formatter={(value) => [`${value} nodes`, 'Active Nodes']}
+                              labelFormatter={(label) => format(new Date(label), "MMM d, yyyy")}
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="new_records_count"
+                              stroke="#7afbaf"
+                              strokeWidth={2}
+                              dot={false}
+                              activeDot={{ r: 6, fill: "#7afbaf" }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="geo" className="flex-1 mt-0">
+                    <div className="h-full flex items-center justify-center">
+                      <p className="text-neutral-400">Geographic distribution view coming soon</p>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </motion.div>
             </div>
 
