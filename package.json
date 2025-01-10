@@ -24,6 +24,7 @@
     "date-fns": "^4.1.0",
     "dotted-map": "^2.2.3",
     "framer-motion": "^11.15.0",
+    "geoip-lite": "^1.4.10",
     "lucide-react": "^0.468.0",
     "next": "15.1.1",
     "react": "^18",
