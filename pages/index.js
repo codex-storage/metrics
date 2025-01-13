@@ -234,16 +234,19 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           className="sticky top-0 z-50 backdrop-blur-xl bg-black/50 border-b border-neutral-800"
         >
-          <div className="max-w-[2000px] mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+          <div className="max-w-[2000px] mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-0 sm:justify-between">
             <div className="flex items-center gap-3">
-              <img src="/logo.svg" alt="Codex" className="w-10 h-10" />
-              <h1 className="text-lg sm:text-xl font-bold">Testnet Metrics</h1>
+              <img src="/logo.svg" alt="Codex" className="w-8 h-8 sm:w-10 sm:h-10" />
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg sm:text-xl font-bold">Metrics</h1>
+                <span className="text-xs text-[#7afbaf] font-bold border border-[#7afbaf] rounded-full px-2 py-0.5">Testnet</span>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <select
                 value={timeframe}
                 onChange={(e) => setTimeframe(e.target.value)}
-                className="bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-sm font-medium
+                className="flex-1 sm:flex-none min-w-[120px] bg-neutral-900 border border-neutral-800 rounded-lg px-2 sm:px-3 py-2 text-sm font-medium
                   hover:border-neutral-700 focus:border-[#7afbaf] focus:ring-1 focus:ring-[#7afbaf] 
                   transition-colors cursor-pointer outline-none"
               >
@@ -275,7 +278,7 @@ export default function Dashboard() {
                     <span className="sr-only">Dashboard information</span>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[600px]">
+                <DialogContent className="sm:max-w-[600px] mx-4">
                   <DialogHeader>
                     <DialogTitle className="mb-6">Testnet Metrics</DialogTitle>
                     <div className="w-full h-40 bg-neutral-800 rounded-lg mb-6 animate-pulse" />
