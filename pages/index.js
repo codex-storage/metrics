@@ -40,10 +40,18 @@ import {
 import Head from "next/head";
 
 // Initialize Supabase client
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  supabaseUrl || '',
+  supabaseAnonKey || ''
 );
+
+// Add error handling for missing environment variables
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Missing environment variables for Supabase');
+}
 
 const ITEMS_PER_PAGE = 5;
 
@@ -220,10 +228,28 @@ export default function Dashboard() {
       <Head>
         <title>Codex Metrics</title>
         <meta name="description" content="Real-time metrics dashboard for Codex testnet nodes, displaying network statistics, version distribution, and geographic data." />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://metrics.codex.storage" />
         <meta property="og:title" content="Codex Metrics" />
         <meta property="og:description" content="Real-time metrics dashboard for Codex testnet nodes, displaying network statistics, version distribution, and geographic data." />
-        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://metrics.codex.storage/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://metrics.codex.storage" />
+        <meta name="twitter:title" content="Codex Metrics" />
+        <meta name="twitter:description" content="Real-time metrics dashboard for Codex testnet nodes, displaying network statistics, version distribution, and geographic data." />
+        <meta name="twitter:image" content="https://metrics.codex.storage/og-image.png" />
+        
+        {/* Additional SEO */}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="keywords" content="Codex, blockchain, storage, testnet, metrics, dashboard, nodes, network statistics" />
+        <link rel="canonical" href="https://metrics.codex.storage" />
         <link rel="icon" href="/logo.svg" />
       </Head>
 
