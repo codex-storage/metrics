@@ -67,7 +67,7 @@ export default function Dashboard() {
     versions: true,
     peers: true,
   });
-  
+
   // Pagination and Search states
   const [versionPage, setVersionPage] = useState(1);
   const [peerPage, setPeerPage] = useState(1);
@@ -83,8 +83,8 @@ export default function Dashboard() {
   useEffect(() => {
     if (searchQuery.trim()) {
       setIsSearching(true);
-      const results = activePeerIds.filter(peerId => 
-        peerId.toLowerCase().includes(searchQuery.toLowerCase())
+      const results = activeNodeIds.filter(nodeId =>
+        nodeId.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setSearchResults(results);
       setPeerPage(1);
@@ -105,12 +105,24 @@ export default function Dashboard() {
     });
 
     try {
+      // Calculate date range based on timeframe
+      const now = new Date();
+      const startDate = new Date();
+      if (timeframe === "7d") {
+        startDate.setDate(now.getDate() - 7);
+      } else if (timeframe === "30d") {
+        startDate.setDate(now.getDate() - 30);
+      } else if (timeframe === "1y") {
+        startDate.setDate(now.getDate() - 365);
+      }
+
       // Fetch metrics
       const { data: metricsData, error: metricsError } = await supabase
         .from("metrics")
         .select("*")
-        .order("date", { ascending: true })
-        .limit(timeframe === "7d" ? 7 : timeframe === "30d" ? 30 : 365);
+        .gte('date', startDate.toISOString().split('T')[0])
+        .lte('date', now.toISOString().split('T')[0])
+        .order("date", { ascending: true });
 
       if (metricsError) throw metricsError;
       setMetrics(metricsData || []);
@@ -188,7 +200,7 @@ export default function Dashboard() {
     const date = new Date(timestamp);
     const time = format(date, "HH:mm");
     let dateText;
-    
+
     if (isToday(date)) {
       dateText = "Today";
     } else if (isYesterday(date)) {
@@ -196,17 +208,26 @@ export default function Dashboard() {
     } else {
       dateText = format(date, "dd.MM.yyyy");
     }
-    
+
     return { time, dateText };
   };
 
   // Calculate statistics
-  const currentActiveNodes = activeNodes.length;
+  const totalUniqueNodes = [...new Set(activeNodes.map(node => node.node_id))].length;
   const averagePeerCount = activeNodes.length
     ? (activeNodes.reduce((acc, node) => acc + node.peer_count, 0) / activeNodes.length).toFixed(1)
     : 0;
   const activePeerIds = [...new Set(activeNodes.map((node) => node.peer_id))];
-  const totalNodes = metrics.reduce((acc, day) => acc + day.new_records_count, 0);
+
+  // Calculate today's active nodes
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todayActiveNodes = [...new Set(
+    activeNodes
+      .filter(node => new Date(node.timestamp) >= todayStart)
+      .map(node => node.node_id)
+  )].length;
+
   const versionDistribution = activeNodes.reduce((acc, node) => {
     acc[node.version] = (acc[node.version] || 0) + 1;
     return acc;
@@ -223,12 +244,46 @@ export default function Dashboard() {
   const totalVersionPages = getPageCount(versionEntries.length);
   const totalPeerPages = getPageCount(displayPeerIds.length);
 
+  // Prepare chart data
+  const chartData = metrics.map((day) => ({
+    date: new Date(day.date),
+    "Active Nodes": day.active_nodes_count
+  }));
+
+  // Get unique node IDs and their latest records
+  const nodeRecords = activeNodes.reduce((acc, node) => {
+    if (!acc[node.node_id] || new Date(acc[node.node_id].timestamp) < new Date(node.timestamp)) {
+      acc[node.node_id] = node;
+    }
+    return acc;
+  }, {});
+
+  const activeNodeIds = Object.keys(nodeRecords);
+  const displayNodeIds = searchQuery ? searchResults : activeNodeIds;
+  const paginatedNodeIds = getPaginatedData(displayNodeIds, peerPage);
+  const totalNodePages = getPageCount(displayNodeIds.length);
+
+  // Node details dialog state
+  const [selectedNode, setSelectedNode] = useState(null);
+
+  // Format timestamp for node details
+  const formatNodeTimestamp = (timestamp) => {
+    if (!timestamp) return "N/A";
+    const date = new Date(timestamp);
+    if (isToday(date)) {
+      return `Today at ${format(date, "HH:mm")}`;
+    } else if (isYesterday(date)) {
+      return `Yesterday at ${format(date, "HH:mm")}`;
+    }
+    return format(date, "MMM d, yyyy 'at' HH:mm");
+  };
+
   return (
     <>
       <Head>
         <title>Codex Metrics</title>
         <meta name="description" content="Real-time metrics dashboard for Codex testnet nodes, displaying network statistics, version distribution, and geographic data." />
-        
+
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://metrics.codex.storage" />
@@ -237,14 +292,14 @@ export default function Dashboard() {
         <meta property="og:image" content="https://metrics.codex.storage/og-image.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        
+
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://metrics.codex.storage" />
         <meta name="twitter:title" content="Codex Metrics" />
         <meta name="twitter:description" content="Real-time metrics dashboard for Codex testnet nodes, displaying network statistics, version distribution, and geographic data." />
         <meta name="twitter:image" content="https://metrics.codex.storage/og-image.png" />
-        
+
         {/* Additional SEO */}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
@@ -312,9 +367,9 @@ export default function Dashboard() {
                     <DialogDescription className="text-sm sm:text-base pt-2 sm:pt-3 space-y-4">
                       <p>
                         The data displayed in this dashboard is collected from Codex nodes that use the{' '}
-                        <a 
-                          href="https://github.com/codex-storage/cli" 
-                          target="_blank" 
+                        <a
+                          href="https://github.com/codex-storage/cli"
+                          target="_blank"
                           rel="noopener noreferrer"
                           className="text-[#7afbaf] hover:underline"
                         >
@@ -323,19 +378,19 @@ export default function Dashboard() {
                         {' '}for running a Codex alturistic node in the testnet.
                       </p>
                       <p>
-                        Users agree to a privacy disclaimer before using the Codex CLI and the data collected will be used to 
-                        understand the testnet statistics and help troubleshooting users who face 
+                        Users agree to a privacy disclaimer before using the Codex CLI and the data collected will be used to
+                        understand the testnet statistics and help troubleshooting users who face
                         difficulty in getting onboarded to Codex.
                       </p>
                     </DialogDescription>
-                    <div className="mt-6 sm:mt-8 space-y-4 sm:space-y-6 border-t border-neutral-800 pt-4 sm:pt-6">
+                    <div className="mt-6 sm:mt-8 space-y-4 sm:space-y-6  pt-4 sm:pt-6">
                       <div>
-                        <h4 className="text-sm sm:text-base font-semibold text-white mb-2 sm:mb-3">Don't wish to provide data?</h4>
+                        <h4 className="text-sm sm:text-base font-semibold text-white mb-2 sm:mb-3 border-t border-neutral-800 pt-4 sm:pt-6">Don't wish to provide data?</h4>
                         <p className="text-sm text-neutral-400">
                           You can still run a Codex node without providing any data. To do this, please follow the steps mentioned in the{' '}
-                          <a 
-                            href="https://docs.codex.storage/" 
-                            target="_blank" 
+                          <a
+                            href="https://docs.codex.storage/"
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="text-[#7afbaf] hover:underline"
                           >
@@ -356,7 +411,7 @@ export default function Dashboard() {
                           The best way to get in touch with us is to join the{' '}
                           <a
                             href="https://discord.gg/codex-storage"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="text-[#7afbaf] hover:underline"
                           >
@@ -384,8 +439,8 @@ export default function Dashboard() {
                 <div className="grid grid-cols-2 lg:grid-cols-1 lg:grid-rows-4 gap-4 lg:h-[450px]">
                   {[
                     {
-                      title: "Active Nodes",
-                      value: currentActiveNodes,
+                      title: "Total Unique Nodes",
+                      value: totalUniqueNodes,
                       Icon: Users,
                       delay: 0,
                       isLoading: componentLoading.nodes,
@@ -398,11 +453,11 @@ export default function Dashboard() {
                       isLoading: componentLoading.nodes,
                     },
                     {
-                      title: "Total Nodes",
-                      value: totalNodes,
+                      title: "Active Today",
+                      value: todayActiveNodes,
                       Icon: Database,
                       delay: 0.2,
-                      isLoading: componentLoading.metrics,
+                      isLoading: componentLoading.nodes,
                     },
                     {
                       title: "Last Updated",
@@ -481,7 +536,7 @@ export default function Dashboard() {
                       ) : (
                         <div className="h-full">
                           <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={metrics}>
+                            <LineChart data={chartData}>
                               <CartesianGrid
                                 strokeDasharray="3 3"
                                 stroke="#333"
@@ -515,7 +570,7 @@ export default function Dashboard() {
                               />
                               <Line
                                 type="monotone"
-                                dataKey="new_records_count"
+                                dataKey="Active Nodes"
                                 stroke="#7afbaf"
                                 strokeWidth={2}
                                 dot={false}
@@ -571,7 +626,7 @@ export default function Dashboard() {
                             <div className="w-full bg-neutral-800 rounded-full h-2 overflow-hidden">
                               <motion.div
                                 initial={{ width: 0 }}
-                                animate={{ width: `${(count / currentActiveNodes) * 100}%` }}
+                                animate={{ width: `${(count / totalUniqueNodes) * 100}%` }}
                                 transition={{ duration: 0.5, ease: "easeOut" }}
                                 className="bg-[#7afbaf] h-2 rounded-full"
                               />
@@ -589,7 +644,7 @@ export default function Dashboard() {
                   )}
                 </motion.div>
 
-                {/* Active Peer IDs List */}
+                {/* Active Node IDs List */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -597,58 +652,89 @@ export default function Dashboard() {
                   className="bg-neutral-900 p-4 sm:p-6 rounded-xl border border-neutral-800 
                     hover:border-neutral-700 transition-colors h-[300px] lg:h-[350px] flex flex-col"
                 >
-                  <div className="flex flex-col gap-4 sm:gap-6">
-                    <h3 className="text-neutral-400 font-medium flex items-center gap-2">
-                      <Network className="w-5 h-5 opacity-60" />
-                      Active Peer IDs
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-medium text-neutral-400 flex items-center gap-2">
+                      <Database className="w-4 h-4 opacity-60" />
+                      Active Node IDs
                     </h3>
                     <div className="relative">
+                      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                       <input
                         type="text"
-                        placeholder="Search peer IDs..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2 
-                          text-sm placeholder-neutral-500 focus:border-[#7afbaf] focus:ring-1 
-                          focus:ring-[#7afbaf] transition-colors outline-none"
+                        placeholder="Search node IDs..."
+                        className="pl-9 pr-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-sm
+                          placeholder:text-neutral-500 focus:border-[#7afbaf] focus:ring-1 focus:ring-[#7afbaf]
+                          transition-colors outline-none w-[200px]"
                       />
-                      <Search className="w-4 h-4 text-neutral-500 absolute right-3 top-1/2 -translate-y-1/2" />
                     </div>
                   </div>
-                  {componentLoading.peers ? (
-                    <ComponentSkeleton className="mt-4" />
-                  ) : activePeerIds.length === 0 ? (
-                    <div className="flex items-center justify-center flex-1">
-                      <p className="text-neutral-400">No active peers available</p>
-                    </div>
-                  ) : isSearching ? (
-                    <div className="flex items-center justify-center flex-1">
-                      <RotateCw className="w-6 h-6 text-neutral-400 animate-spin" />
-                    </div>
-                  ) : searchQuery && searchResults.length === 0 ? (
-                    <div className="flex items-center justify-center flex-1">
-                      <p className="text-neutral-400">No matching peer IDs found</p>
+                  {componentLoading.nodes ? (
+                    <ComponentSkeleton />
+                  ) : paginatedNodeIds.length === 0 ? (
+                    <div className="flex-1 flex items-center justify-center">
+                      <p className="text-neutral-400">
+                        {searchQuery ? "No matching node IDs found" : "No active node IDs"}
+                      </p>
                     </div>
                   ) : (
                     <>
-                      <div className="space-y-2 overflow-y-auto flex-1 pr-2 mt-4 scrollbar-thin 
+                      <div className="space-y-2 overflow-y-auto flex-1 pr-2 scrollbar-thin 
                         scrollbar-thumb-neutral-700 scrollbar-track-neutral-800">
-                        {paginatedPeerIds.map((peerId, index) => (
-                          <motion.div
-                            key={peerId}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.1 * (index % 5) }}
-                            className="bg-neutral-800 p-3 rounded-lg text-xs sm:text-sm font-medium 
-                              break-all hover:bg-neutral-700/50 transition-colors"
-                          >
-                            {peerId}
-                          </motion.div>
-                        ))}
+                        {paginatedNodeIds.map((nodeId) => {
+                          const node = nodeRecords[nodeId];
+                          return (
+                            <Dialog key={nodeId}>
+                              <DialogTrigger asChild>
+                                <button
+                                  className="w-full p-3 bg-neutral-800/50 hover:bg-neutral-800 
+                                    rounded-lg transition-colors text-left text-sm flex items-center 
+                                    justify-between group"
+                                >
+                                  <span className="truncate flex-1">{nodeId}</span>
+                                  <span className="text-[#7afbaf] opacity-0 group-hover:opacity-100 
+                                    transition-opacity text-xs">View Details</span>
+                                </button>
+                              </DialogTrigger>
+                              <DialogContent className="p-4 sm:p-6">
+                                <DialogHeader>
+                                  <div className="flex items-center gap-3 mb-4">
+                                    <img src="/logo.svg" alt="Codex" className="w-8 h-8 sm:w-10 sm:h-10" />
+                                    <div className="flex items-center gap-2">
+                                      <h1 className="text-lg sm:text-xl font-bold text-white">Codex</h1>
+                                      <span className="text-xs text-[#7afbaf] font-bold border border-[#7afbaf] rounded-full px-2 py-0.5">Testnet</span>
+                                    </div>
+                                  </div>
+                                  <div className="space-y-4">
+                                    <div>
+                                      <h4 className="text-sm text-neutral-400 mb-1">NODE ID</h4>
+                                      <p className="text-sm sm:text-base font-medium break-all text-[#7afbaf]">{nodeId}</p>
+                                    </div>
+                                    <div>
+                                      <h4 className="text-sm text-neutral-400 mb-1">VERSION</h4>
+                                      <p className="text-sm sm:text-base font-medium text-[#7afbaf]">{node.version}</p>
+                                    </div>
+                                    <div>
+                                      <h4 className="text-sm text-neutral-400 mb-1">LAST ONLINE</h4>
+                                      <p className="text-sm sm:text-base font-medium text-[#7afbaf]">
+                                        {formatNodeTimestamp(node.timestamp)}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <h4 className="text-sm text-neutral-400 mb-1">CONNECTED DHT PEERS</h4>
+                                      <p className="text-sm sm:text-base font-medium text-[#7afbaf]">{node.peer_count}</p>
+                                    </div>
+                                  </div>
+                                </DialogHeader>
+                              </DialogContent>
+                            </Dialog>
+                          );
+                        })}
                       </div>
                       <PaginationControls
                         currentPage={peerPage}
-                        totalPages={totalPeerPages}
+                        totalPages={totalNodePages}
                         onPageChange={setPeerPage}
                         className="mt-4 pt-4 border-t border-neutral-800"
                       />
