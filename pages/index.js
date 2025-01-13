@@ -278,57 +278,65 @@ export default function Dashboard() {
                     <span className="sr-only">Dashboard information</span>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[600px] mx-4">
+                <DialogContent className="p-4 sm:p-6">
                   <DialogHeader>
-                    <DialogTitle className="mb-6">Testnet Metrics</DialogTitle>
-                    <div className="w-full h-40 bg-neutral-800 rounded-lg mb-6 animate-pulse" />
-                    <DialogDescription className="pt-3">
-                      The data displayed in this dashboard is collected from Codex nodes that use the{' '}
-                      <a 
-                        href="https://github.com/codex-storage/cli" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-[#7afbaf] hover:underline"
-                      >
-                        Codex CLI
-                      </a>
-                      {' '}for running a Codex alturistic node in the testnet. Users agree to a privacy 
-                      disclaimer before using the Codex CLI and the data collected will be used to 
-                      understand the testnet statistics and help troubleshooting users who face 
-                      difficulty in getting onboarded to Codex.
+                    <DialogTitle className="text-xl sm:text-2xl mb-4 sm:mb-6">Testnet Metrics</DialogTitle>
+                    {/* Image dimensions: 1200x630 (2:1.05 aspect ratio - optimal for social sharing) */}
+                    <img src="testnet.png" alt="Testnet Metrics" className="w-full aspect-[2/1.05] rounded-lg mb-4 sm:mb-6" />
+                    <DialogDescription className="text-sm sm:text-base pt-2 sm:pt-3 space-y-4">
+                      <p>
+                        The data displayed in this dashboard is collected from Codex nodes that use the{' '}
+                        <a 
+                          href="https://github.com/codex-storage/cli" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-[#7afbaf] hover:underline"
+                        >
+                          Codex CLI
+                        </a>
+                        {' '}for running a Codex alturistic node in the testnet.
+                      </p>
+                      <p>
+                        Users agree to a privacy disclaimer before using the Codex CLI and the data collected will be used to 
+                        understand the testnet statistics and help troubleshooting users who face 
+                        difficulty in getting onboarded to Codex.
+                      </p>
                     </DialogDescription>
-                    <div className="mt-8 space-y-4 border-neutral-800 pt-4">
+                    <div className="mt-6 sm:mt-8 space-y-4 sm:space-y-6 border-t border-neutral-800 pt-4 sm:pt-6">
                       <div>
-                        <h4 className="text-sm font-semibold text-white mb-2">Don't wish to provide data?</h4>
+                        <h4 className="text-sm sm:text-base font-semibold text-white mb-2 sm:mb-3">Don't wish to provide data?</h4>
                         <p className="text-sm text-neutral-400">
-                          You can still run a Codex node without providing any data. To do this, please follow the steps mentioned in the                     <a 
-                        href="https://docs.codex.storage/" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-[#7afbaf] hover:underline"
-                      >
-                        Codex documentation
-                      </a> which does not use the Codex CLI.
+                          You can still run a Codex node without providing any data. To do this, please follow the steps mentioned in the{' '}
+                          <a 
+                            href="https://docs.codex.storage/" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-[#7afbaf] hover:underline"
+                          >
+                            Codex documentation
+                          </a>
+                          {' '}which does not use the Codex CLI.
                         </p>
                       </div>
                       <div>
-                        <h4 className="text-sm font-semibold text-white mb-2">Is there an incentive to run a Codex node?</h4>
+                        <h4 className="text-sm sm:text-base font-semibold text-white mb-2 sm:mb-3">Is there an incentive to run a Codex node?</h4>
                         <p className="text-sm text-neutral-400">
                           Codex is currently in testnet and it is not incentivized. However, in the future, Codex may be incentivized as per the roadmap. But please bear in mind that no incentives are promised for testnet node operators.
                         </p>
                       </div>
                       <div>
-                        <h4 className="text-sm font-semibold text-white mb-2">I have a question or suggestion</h4>
+                        <h4 className="text-sm sm:text-base font-semibold text-white mb-2 sm:mb-3">I have a question or suggestion</h4>
                         <p className="text-sm text-neutral-400">
-                          The best way to get in touch with us is to join the 
-                        <a
-                        href="https://discord.gg/codex-storage"
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-[#7afbaf] hover:underline"
-                      >
-                        {" "}Codex discord
-                      </a> and ask your question in the #support channel.
+                          The best way to get in touch with us is to join the{' '}
+                          <a
+                            href="https://discord.gg/codex-storage"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-[#7afbaf] hover:underline"
+                          >
+                            Codex discord
+                          </a>
+                          {' '}and ask your question in the #support channel.
                         </p>
                       </div>
                     </div>
