@@ -19,6 +19,7 @@ import {
   Globe,
   Info,
   Wallet,
+  Terminal,
 } from "lucide-react";
 import {
   LineChart,
@@ -436,6 +437,16 @@ export default function Dashboard() {
                   </DialogHeader>
                 </DialogContent>
               </Dialog>
+              <a
+                href="/run"
+                className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm font-medium text-[#7afbaf] 
+                  bg-[#7afbaf]/10 border border-[#7afbaf] rounded-lg
+                  hover:bg-[#7afbaf]/20 focus:ring-1 focus:ring-[#7afbaf] 
+                  transition-colors cursor-pointer outline-none"
+              >
+                <Terminal className="w-4 h-4" />
+                Run a testnet node
+              </a>
             </div>
           </div>
         </motion.header>
