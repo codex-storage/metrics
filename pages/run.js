@@ -301,7 +301,7 @@ export default function RunPage() {
                 <div className="bg-neutral-900/50 rounded-lg p-4 border border-neutral-800">
                   <h3 className="text-lg font-medium text-white mb-3">Prerequisites</h3>
                   <p className="text-neutral-400 mb-4">
-                    Before you begin, ensure you have Node.js installed on your machine. The Codex CLI requires Node.js to run.
+                    Before you begin, ensure you have Node.js version 14 or higher (version 18 is recommended) installed on your machine. The Codex CLI requires Node.js to run.
                   </p>
                 </div>
                 <div className="bg-neutral-900/50 rounded-lg p-4 border border-neutral-800">
