@@ -294,29 +294,33 @@ export default function Dashboard() {
   return (
     <>
       <Head>
-        <title>Codex Metrics</title>
-        <meta name="description" content="Real-time metrics dashboard for Codex testnet nodes, displaying network statistics, version distribution, and geographic data." />
+        <title>Codex Metrics | Testnet Network Statistics</title>
+        <meta name="description" content="Real-time metrics dashboard for Codex testnet nodes. Monitor network statistics, version distribution, active nodes, and peer connections in the Codex network." />
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://metrics.codex.storage" />
-        <meta property="og:title" content="Codex Metrics" />
-        <meta property="og:description" content="Real-time metrics dashboard for Codex testnet nodes, displaying network statistics, version distribution, and geographic data." />
-        <meta property="og:image" content="https://metrics.codex.storage/og-image.png" />
+        <meta property="og:title" content="Codex Metrics | Testnet Network Statistics" />
+        <meta property="og:description" content="Real-time metrics dashboard for Codex testnet nodes. Monitor network statistics, version distribution, active nodes, and peer connections in the Codex network." />
+        <meta property="og:image" content="https://metrics.codex.storage/CodexTestnetOG.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="Codex Metrics" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://metrics.codex.storage" />
-        <meta name="twitter:title" content="Codex Metrics" />
-        <meta name="twitter:description" content="Real-time metrics dashboard for Codex testnet nodes, displaying network statistics, version distribution, and geographic data." />
-        <meta name="twitter:image" content="https://metrics.codex.storage/og-image.png" />
+        <meta name="twitter:title" content="Codex Metrics | Testnet Network Statistics" />
+        <meta name="twitter:description" content="Real-time metrics dashboard for Codex testnet nodes. Monitor network statistics, version distribution, active nodes, and peer connections in the Codex network." />
+        <meta name="twitter:image" content="https://metrics.codex.storage/CodexTestnetOG.png" />
+        <meta name="twitter:creator" content="@CodexStorage" />
 
         {/* Additional SEO */}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
-        <meta name="keywords" content="Codex, blockchain, storage, testnet, metrics, dashboard, nodes, network statistics" />
+        <meta name="keywords" content="Codex, blockchain, decentralized storage, testnet, metrics, dashboard, nodes, network statistics, peer connections, version distribution" />
+        <meta name="author" content="Codex Storage" />
+        <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://metrics.codex.storage" />
         <link rel="icon" href="/logo.svg" />
       </Head>
