@@ -302,9 +302,12 @@ export default function Dashboard() {
         <meta property="og:url" content="https://metrics.codex.storage" />
         <meta property="og:title" content="Codex Metrics | Testnet Network Statistics" />
         <meta property="og:description" content="Real-time metrics dashboard for Codex testnet nodes. Monitor network statistics, version distribution, active nodes, and peer connections in the Codex network." />
-        <meta property="og:image" content="https://metrics.codex.storage/CodexTestnetOG.png" />
+        <meta property="og:image" content="/CodexTestnetOG.png" />
+        <meta property="og:image:secure_url" content="/CodexTestnetOG.png" />
+        <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Codex Metrics Dashboard" />
         <meta property="og:site_name" content="Codex Metrics" />
 
         {/* Twitter */}
@@ -312,7 +315,8 @@ export default function Dashboard() {
         <meta name="twitter:url" content="https://metrics.codex.storage" />
         <meta name="twitter:title" content="Codex Metrics | Testnet Network Statistics" />
         <meta name="twitter:description" content="Real-time metrics dashboard for Codex testnet nodes. Monitor network statistics, version distribution, active nodes, and peer connections in the Codex network." />
-        <meta name="twitter:image" content="https://metrics.codex.storage/CodexTestnetOG.png" />
+        <meta name="twitter:image" content="/CodexTestnetOG.png" />
+        <meta name="twitter:image:alt" content="Codex Metrics Dashboard" />
         <meta name="twitter:creator" content="@CodexStorage" />
 
         {/* Additional SEO */}
