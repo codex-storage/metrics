@@ -321,26 +321,44 @@ export default function Dashboard() {
         <link rel="icon" href="/logo.svg" />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-bl from-black to-[#222222] text-white overflow-x-hidden">
+      <div className="min-h-screen bg-gradient-to-bl from-black to-[#222222] text-white overflow-x-hidden relative">
+        {/* Rotating Background Image */}
+        <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+          <motion.div
+            className="absolute bottom-[-20%] right-[-20%] w-[800px] h-[800px]"
+            animate={{ rotate: 360 }}
+            transition={{
+              duration: 200,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          >
+            <img
+              src="/codexrock.webp"
+              alt=""
+              className="w-full h-full object-cover opacity-[0.07] sm:opacity-10"
+            />
+          </motion.div>
+        </div>
         {/* Header */}
         <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="sticky top-0 z-50 backdrop-blur-xl bg-black/50 border-b border-neutral-800"
         >
-          <div className="max-w-[2000px] mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-0 sm:justify-between">
-            <div className="flex items-center gap-3">
-              <img src="/logo.svg" alt="Codex" className="w-8 h-8 sm:w-10 sm:h-10" />
+          <div className="max-w-[2000px] mx-auto px-3 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <img src="/logo.svg" alt="Codex" className="w-7 h-7 sm:w-10 sm:h-10" />
               <div className="flex items-center gap-2">
-                <h1 className="text-lg sm:text-xl font-bold">Metrics</h1>
-                <span className="text-xs text-[#7afbaf] font-bold border border-[#7afbaf] rounded-full px-2 py-0.5">Testnet</span>
+                <h1 className="text-base sm:text-xl font-bold">Metrics</h1>
+                <span className="text-[10px] sm:text-xs text-[#7afbaf] font-bold border border-[#7afbaf] rounded-full px-1.5 sm:px-2 py-0.5">Testnet</span>
               </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <select
                 value={timeframe}
                 onChange={(e) => setTimeframe(e.target.value)}
-                className="flex-1 sm:flex-none min-w-[120px] bg-neutral-900 border border-neutral-800 rounded-lg px-2 sm:px-3 py-2 text-sm font-medium
+                className="flex-1 sm:flex-none min-w-[100px] sm:min-w-[120px] bg-neutral-900 border border-neutral-800 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium
                   hover:border-neutral-700 focus:border-[#7afbaf] focus:ring-1 focus:ring-[#7afbaf] 
                   transition-colors cursor-pointer outline-none"
               >
@@ -351,28 +369,28 @@ export default function Dashboard() {
               <button
                 onClick={fetchData}
                 disabled={loading}
-                className="p-2 text-neutral-400 hover:text-[#7afbaf] disabled:text-neutral-600 
+                className="p-1.5 sm:p-2 text-neutral-400 hover:text-[#7afbaf] disabled:text-neutral-600 
                   bg-neutral-900 border border-neutral-800 rounded-lg
                   hover:border-neutral-700 disabled:border-neutral-800 disabled:hover:border-neutral-800
                   focus:border-[#7afbaf] focus:ring-1 focus:ring-[#7afbaf] 
                   transition-colors cursor-pointer disabled:cursor-not-allowed outline-none"
               >
-                <RotateCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                <RotateCw className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="sr-only">Refresh data</span>
               </button>
               <Dialog>
                 <DialogTrigger asChild>
                   <button
-                    className="p-2 text-neutral-400 hover:text-[#7afbaf]
+                    className="p-1.5 sm:p-2 text-neutral-400 hover:text-[#7afbaf]
                       bg-neutral-900 border border-neutral-800 rounded-lg
                       hover:border-neutral-700 focus:border-[#7afbaf] focus:ring-1 
                       focus:ring-[#7afbaf] transition-colors cursor-pointer outline-none"
                   >
-                    <Info className="w-5 h-5" />
+                    <Info className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span className="sr-only">Dashboard information</span>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="p-4 sm:p-6">
+                <DialogContent className="p-4 sm:p-6 w-[95%] sm:w-full max-w-2xl mx-auto">
                   <DialogHeader>
                     <DialogTitle className="text-xl sm:text-2xl mb-4 sm:mb-6">Testnet Metrics</DialogTitle>
                     {/* Image dimensions: 1200x630 (2:1.05 aspect ratio - optimal for social sharing) */}
@@ -451,15 +469,15 @@ export default function Dashboard() {
           </div>
         </motion.header>
 
-        <main className="max-w-[2000px] mx-auto px-4 sm:px-6 py-4 sm:py-6">
+        <main className="max-w-[2000px] mx-auto px-3 sm:px-6 py-3 sm:py-6">
           {error ? (
             <ErrorState message={error} />
           ) : (
-            <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-3 sm:space-y-6">
               {/* Top Section: Stats + Graph */}
-              <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+              <div className="grid gap-3 sm:gap-6 lg:grid-cols-2">
                 {/* Left Column - Stats Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-1 lg:grid-rows-4 gap-4 lg:h-[450px]">
+                <div className="grid grid-cols-2 lg:grid-cols-1 lg:grid-rows-4 gap-3 sm:gap-4 lg:h-[450px]">
                   {[
                     {
                       title: "Total Unique Nodes",
@@ -495,28 +513,28 @@ export default function Dashboard() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: stat.delay }}
-                      className="bg-neutral-900 p-4 sm:p-5 rounded-xl hover:bg-neutral-900/80 
-                        transition-colors border border-neutral-800 hover:border-neutral-700
+                      className="bg-neutral-900/30 backdrop-blur-sm p-3 sm:p-5 rounded-xl hover:bg-neutral-900/40 
+                        transition-colors border border-neutral-800/50 hover:border-neutral-700
                         flex flex-col justify-between h-full"
                     >
-                      <h3 className="text-neutral-400 text-sm font-medium flex items-center gap-2 mb-3">
-                        <stat.Icon className="w-4 h-4 opacity-60" />
+                      <h3 className="text-neutral-400 text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
+                        <stat.Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 opacity-60" />
                         {stat.title}
                       </h3>
                       <div className="mt-auto">
                         {stat.isLoading ? (
-                          <div className="h-8 bg-neutral-800/50 rounded animate-pulse" />
+                          <div className="h-6 sm:h-8 bg-neutral-800/50 rounded animate-pulse" />
                         ) : stat.title === "Last Updated" ? (
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-lg sm:text-xl lg:text-2xl font-bold text-[#7afbaf] tracking-tight">
+                          <div className="flex items-baseline gap-1.5 sm:gap-2">
+                            <span className="text-base sm:text-xl lg:text-2xl font-bold text-[#7afbaf] tracking-tight">
                               {lastUpdated.time}
                             </span>
-                            <span className="text-sm font-medium text-[#7afbaf] opacity-70">
+                            <span className="text-xs sm:text-sm font-medium text-[#7afbaf] opacity-70">
                               {lastUpdated.dateText}
                             </span>
                           </div>
                         ) : (
-                          <p className="text-lg sm:text-xl lg:text-2xl font-bold text-[#7afbaf] tracking-tight">
+                          <p className="text-base sm:text-xl lg:text-2xl font-bold text-[#7afbaf] tracking-tight">
                             {stat.value}
                           </p>
                         )}
@@ -530,7 +548,7 @@ export default function Dashboard() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="bg-neutral-900 p-4 sm:p-6 rounded-xl h-[350px] lg:h-[450px] border border-neutral-800 
+                  className="bg-neutral-900/30 backdrop-blur-sm p-3 sm:p-6 rounded-xl h-[300px] sm:h-[350px] lg:h-[450px] border border-neutral-800/50 
                     hover:border-neutral-700 transition-colors"
                 >
                   <Tabs defaultValue="nodes" className="h-full flex flex-col">
@@ -615,17 +633,17 @@ export default function Dashboard() {
               </div>
 
               {/* Bottom Section: Version Distribution + Active Peers */}
-              <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+              <div className="grid gap-3 sm:gap-6 lg:grid-cols-2">
                 {/* Version Distribution */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="bg-neutral-900 p-4 sm:p-6 rounded-xl border border-neutral-800 
-                    hover:border-neutral-700 transition-colors h-[300px] lg:h-[350px] flex flex-col"
+                  className="bg-neutral-900/30 backdrop-blur-sm p-3 sm:p-6 rounded-xl border border-neutral-800/50 
+                    hover:border-neutral-700 transition-colors min-h-[250px] sm:h-[300px] lg:h-[350px] flex flex-col"
                 >
-                  <h3 className="text-neutral-400 mb-4 sm:mb-6 font-medium flex items-center gap-2">
-                    <Database className="w-5 h-5 opacity-60" />
+                    <h3 className="text-xs sm:text-sm font-medium text-neutral-400 flex items-center gap-2 mb-6">
+                    <Database className="w-4 h-4 sm:w-5 sm:h-5 opacity-60" />
                     Version Distribution
                   </h3>
                   {componentLoading.versions ? (
@@ -636,22 +654,22 @@ export default function Dashboard() {
                     </div>
                   ) : (
                     <>
-                      <div className="space-y-4 overflow-y-auto flex-1 pr-2 scrollbar-thin 
+                      <div className="space-y-3 overflow-y-auto flex-1 pr-2 scrollbar-thin 
                         scrollbar-thumb-neutral-700 scrollbar-track-neutral-800">
                         {paginatedVersions.map(([version, count]) => (
                           <div key={version}>
-                            <div className="flex justify-between mb-2">
-                              <span className="font-medium text-sm sm:text-base">{version}</span>
-                              <span className="font-medium text-sm sm:text-base text-[#7afbaf]">
+                            <div className="flex justify-between mb-1.5 sm:mb-2">
+                              <span className="font-medium text-xs sm:text-base truncate max-w-[180px] sm:max-w-none">{version}</span>
+                              <span className="font-medium text-xs sm:text-base text-[#7afbaf] ml-2">
                                 {count}
                               </span>
                             </div>
-                            <div className="w-full bg-neutral-800 rounded-full h-2 overflow-hidden">
+                            <div className="w-full bg-neutral-800 rounded-md h-1.5 sm:h-2 overflow-hidden">
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${(count / totalUniqueNodes) * 100}%` }}
                                 transition={{ duration: 0.5, ease: "easeOut" }}
-                                className="bg-[#7afbaf] h-2 rounded-full"
+                                className="bg-[#7afbaf] h-full"
                               />
                             </div>
                           </div>
@@ -661,7 +679,7 @@ export default function Dashboard() {
                         currentPage={versionPage}
                         totalPages={totalVersionPages}
                         onPageChange={setVersionPage}
-                        className="mt-4 pt-4 border-t border-neutral-800"
+                        className="mt-3 pt-3 sm:mt-4 sm:pt-4 border-t border-neutral-800"
                       />
                     </>
                   )}
@@ -672,24 +690,24 @@ export default function Dashboard() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  className="bg-neutral-900 p-4 sm:p-6 rounded-xl border border-neutral-800 
-                    hover:border-neutral-700 transition-colors h-[300px] lg:h-[350px] flex flex-col"
+                  className="bg-neutral-900/30 backdrop-blur-sm p-3 sm:p-6 rounded-xl border border-neutral-800/50 
+                    hover:border-neutral-700 transition-colors min-h-[250px] sm:h-[300px] lg:h-[350px] flex flex-col"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-medium text-neutral-400 flex items-center gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-3 sm:mb-6">
+                    <h3 className="text-xs sm:text-sm font-medium text-neutral-400 flex items-center gap-2">
                       <Database className="w-4 h-4 opacity-60" />
                       Active Node IDs
                     </h3>
-                    <div className="relative">
-                      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+                    <div className="relative w-full sm:w-auto">
+                      <Search className="w-4 h-4 absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                       <input
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search node IDs..."
-                        className="pl-9 pr-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-sm
+                        className="w-full sm:w-[200px] pl-7 sm:pl-9 pr-3 sm:pr-4 py-1.5 sm:py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-xs sm:text-sm
                           placeholder:text-neutral-500 focus:border-[#7afbaf] focus:ring-1 focus:ring-[#7afbaf]
-                          transition-colors outline-none w-[200px]"
+                          transition-colors outline-none"
                       />
                     </div>
                   </div>
@@ -711,16 +729,16 @@ export default function Dashboard() {
                             <Dialog key={nodeId}>
                               <DialogTrigger asChild>
                                 <button
-                                  className="w-full p-3 bg-neutral-800/50 hover:bg-neutral-800 
-                                    rounded-lg transition-colors text-left text-sm flex items-center 
+                                  className="w-full p-2 sm:p-3 bg-neutral-800/50 hover:bg-neutral-800 
+                                    rounded-lg transition-colors text-left text-xs sm:text-sm flex items-center 
                                     justify-between group"
                                 >
-                                  <span className="truncate flex-1">{nodeId}</span>
+                                  <span className="truncate max-w-[180px] sm:max-w-none flex-1 mr-2">{nodeId}</span>
                                   <span className="text-[#7afbaf] opacity-0 group-hover:opacity-100 
-                                    transition-opacity text-xs">View Details</span>
+                                    transition-opacity text-[10px] sm:text-xs whitespace-nowrap">View Details</span>
                                 </button>
                               </DialogTrigger>
-                              <DialogContent className="p-4 sm:p-6">
+                              <DialogContent className="p-4 sm:p-6 w-[95%] sm:w-full max-w-2xl mx-auto">
                                 <DialogHeader>
                                   <div className="flex items-center gap-3 mb-4">
                                     <img src="/logo.svg" alt="Codex" className="w-8 h-8 sm:w-10 sm:h-10" />
